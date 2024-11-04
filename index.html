@@ -1,0 +1,155 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <title>Aget gate</title>
+      <style>
+        #age-gate {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          backdrop-filter: blur(12px);
+          z-index: 9999;
+        }
+        
+        .age-gate-content {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: #000;
+          padding: 80px;
+          text-align: center;
+          border-radius: 50px;
+        }
+        
+        .age-gate-content h2 {
+          margin-bottom: 20px;
+        }
+        
+        .age-gate-content input {
+          padding: 10px;
+          width: 40%;
+          display: block;
+          margin: 0 auto;
+        	text-align: center;
+        }
+        
+        .age-gate-content button {
+          padding: 10px 20px;
+        	margin-top: 20px;
+        	width: 40%;
+        	color: #ffffff;
+          font-family: 'Hurme Geometric Sans No.2 SemiBold', Sans-serif;
+          font-weight: 600;
+        	background-color: #ff7c00;
+        }
+        
+        .age-gate-content h1 {
+          font-size: 40px;
+          color: #ffffff;
+          font-family: 'Hurme Geometric Sans No.2 SemiBold', Sans-serif;
+          font-weight: 600;
+          margin-bottom: 30px;
+        }
+        
+        .age-gate-content .message {
+          font-size: 20px;
+          color: #ffffff;
+          font-family: 'Hurme Geometric Sans No.2 SemiBold', Sans-serif;
+          font-weight: 600; 
+          margin-bottom: 15px;
+        }
+        	
+        @media (max-width: 768px) {
+        		.age-gate-content {
+          padding: 30px;
+        	}
+        	.age-gate-content input {
+          width: 90%;
+        	}
+        	.age-gate-content button {
+        	width: 90%;
+        	}
+        }
+      </style>
+    </head>
+    <body>
+        <div id="age-gate" style="display: none;">
+          <div class="age-gate-content">
+            <h1 id="age-gate-title"></h1>
+            <p id="age-gate-message" class="message"></p>
+            <input type="number" id="birth-year" placeholder="" min="1900" max="2024">
+            <button id="submit-age"></button>
+          </div>
+        </div>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          var ageGate = document.getElementById('age-gate');
+          var submitButton = document.getElementById('submit-age');
+          var birthYearInput = document.getElementById('birth-year');
+          var ageGateTitle = document.getElementById('age-gate-title');
+          var ageGateMessage = document.getElementById('age-gate-message');
+        
+          var texts = {
+            'pl': {
+              'title': 'Strona z ograniczeniem wiekowym',
+              'message': 'Strona zawiera materiały reklamowe dotyczące<br>napojów alkoholowych przeznaczone wyłącznie<br> dla osób pełnoletnich.',
+              'placeholder': 'Rok urodzenia',
+              'button': 'Potwierdź wiek',
+              'error': 'Proszę wprowadzić prawidłowy rok urodzenia.',
+              'underage': 'Nie masz ukończonych 18 lat.'
+            },
+            'en': {
+              'title': 'Age-restricted content',
+              'message': 'This website contains advertising materials<br>related to alcoholic beverages intended only<br> for adults.',
+              'placeholder': 'Year of birth',
+              'button': 'Confirm age',
+              'error': 'Please enter a valid year of birth.',
+              'underage': 'You are not 18 years old.'
+            }
+          };
+        
+          var language = document.documentElement.lang || navigator.language || 'en';
+          language = language.substring(0,2);
+        
+          if (!texts[language]) {
+            language = 'en';
+          }
+        
+          ageGateTitle.innerHTML = texts[language].title;
+          ageGateMessage.innerHTML = texts[language].message;
+          birthYearInput.placeholder = texts[language].placeholder;
+          submitButton.innerHTML = texts[language].button;
+        
+          if (!localStorage.getItem('ageVerified')) {
+            ageGate.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+          }
+        
+          submitButton.addEventListener('click', function() {
+            var birthYear = parseInt(birthYearInput.value);
+            var currentYear = new Date().getFullYear();
+            var age = currentYear - birthYear;
+        
+            if (isNaN(age)) {
+              alert(texts[language].error);
+              return;
+            }
+        
+            if (age >= 18) {
+              localStorage.setItem('ageVerified', 'true');
+              ageGate.style.display = 'none';
+              document.body.style.overflow = 'auto';
+            } else {
+              window.location.href = 'https://www.wise-drinking.com';
+            }
+          });
+        });
+        </script>
+    </body>
+</html>
